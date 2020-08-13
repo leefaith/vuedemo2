@@ -5,8 +5,11 @@ import App from './App'
 import router from './router'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css';
-import axios from './axios/index'
+import axios from 'axios'
 import './mock/index'
+
+//请求路径
+axios.defaults.baseURL = 'http://localhost:8080'
 
 Vue.prototype.$axios = axios //全局注册，使用方法为:this.$axios
 Vue.config.productionTip = false

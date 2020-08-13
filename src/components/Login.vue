@@ -1,36 +1,36 @@
 <template>
   <div class="login_container">
-    <div class="login_box">
+    <div class="login_box" :model="loginForm">
       <!-- 手机号码-->
       <div class="input_box">
         <input
           type="text"
-          v-model="mobile"
           length="11"
-          required
+          v-model="loginForm.mobile"
           placeholder="请输入手机号码"
-          class="input"
+          class="input_mobile"
         />
       </div>
       <!-- 验证码 -->
-      <div class="input_box"></div>
-      <input
-        type="text"
-        name="code"
-        maxlength="6"
-        placeholder="验证码"
-        class="input2"
-      />
-      <el-button type="primary" size="mini" class="sendCode" @click="getCode(mobile)"
-        >获取验证码</el-button
-      >
-
+      <div class="input_box">
+        <input
+          type="text"
+          length="6"
+          v-model="loginForm.code"
+          placeholder="验证码"
+          class="input_code"
+        />
+        <el-button type="primary" size="mini" class="sendCode" @click="getCode"
+          >获取验证码</el-button
+        >
+      </div>
       <!-- 按钮区域 -->
       <div class="login_button">
         <el-button type="primary" :style="selfstyle" @click="login"
           >登录</el-button
         >
       </div>
+
       <!-- 其他登录方式 -->
       <div class="oauth">
         <img
@@ -45,7 +45,6 @@
           src="//s3.pstatp.com/toutiao/xitu_juejin_web/img/github.547dd8a.svg"
           @click="oauthGit"
         />
-    
       </div>
     </div>
   </div>
@@ -56,8 +55,12 @@ export default {
   components: {},
   data() {
     return {
-      mobile: "",
-      code: "",
+      // 这是登录表单的数据绑定对象
+      loginForm: {
+        mobile: "",
+        code: ""
+      },
+
       selfstyle: {
         color: "white",
         marginTop: "20px",
@@ -67,32 +70,66 @@ export default {
   },
 
   methods: {
-    getCode:function() {
-       this.$axios.post('http://localhost:8080/login/code_request').then(res => {
-          console.log(77, res)
-          if (res.data) {
-            this.cityList = res.data.cityList
+    getCode: function() {
+      this.$axios({
+        methods: "get",
+        url: "/login/code_request",
+        data: {
+          mobile: this.mobile
+        }
+      })
+        .then(res => {
+          console.log(res.data.code_state);
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+    login: function() {
+      this.$axios({
+        methods: "get",
+        url: "/login/code_check",
+        data: {
+          loginForm: this.loginForm
+        }
+      })
+        .then(res => {
+          if (res.data == 404) {
+            this.$message.error("登录失败");
+          } else {
+            console.log(res);
+            this.$message.success("登录成功");
+            window.sessionStorage.setItem("token", res.data);
+            this.$router.push("/welcome");
           }
         })
+        .catch(error => {
+          console.log(error);
+        });
     },
-    login:function(){
-        
+    oauthWx: function() {
+      //   const appid='wx9b65aad1bf925ceb';
+      //   const authorize_url="https://open.weixin.qq.com/connect/oauth2/authorize"
+      //   const edirect_url="http://localhost:8080/login/wxoauth/redirect";
+      //   window.location.href = `${authorize_url}?appid=${this.appid}&redirect_uri=${this.redirect_url}&response_type=code&scope=SCOPE&state=STATE#wechat_redirect`
     },
-      oauthWx:function (){
-      const appid='wx9b65aad1bf925ceb';
-      const authorize_url="https://open.weixin.qq.com/connect/oauth2/authorize"
-      const edirect_url="http://localhost:8080/login/wxoauth/redirect";
-      window.location.href = `${authorize_url}?appid=${this.appid}&redirect_uri=${this.redirect_url}&response_type=code&scope=SCOPE&state=STATE#wechat_redirect`
-  },
-  oauthGit: function() {
-    const client_id = "c27b8b3952f2204fc51d";
-    const authorize_uri = "https://github.com/login/oauth/authorize";
-    const redirect_uri = "http://localhost:8080/login/gitoauth/redirect";
-    window.location.href = `${authorize_uri}?client_id=${client_id}&redirect_uri=${redirect_uri}`;
+    oauthGit: function() {
+      this.$axios({
+        methods: "get",
+        url: "/login/git_request",
+        data: {
+          redirect_uri: "http://localhost:8080/oauth/redirect"
+        }
+      })
+        .then(res => {
+          console.log(res.data.href);
+        //  window.location.href = res.data.href
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    }
   }
-  },
-
-
 };
 </script>
 <style scoped>
@@ -112,12 +149,12 @@ export default {
 .input_box {
   position: relative;
 }
-.input {
+.input_mobile {
   height: 30px;
   width: 250px;
   margin: 20px;
 }
-.input2 {
+.input_code {
   height: 30px;
   width: 150px;
 }

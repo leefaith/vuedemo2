@@ -45,6 +45,6 @@ const oauth = async ctx => {
 };
 
 app.use(main);
-app.use(route.get('/gitoauth/redirect', oauth));
+app.use(route.get('/login/gitoauth/redirect', oauth));
 
 app.listen(8082);

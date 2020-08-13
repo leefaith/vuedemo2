@@ -1,39 +1,50 @@
-import Mock from 'mockjs'
+import Mock from "mockjs";
+const Random = Mock.Random;
+const baseUrl = "http://localhost:8080";
+//获取验证码
+Mock.mock(`${baseUrl}/login/code_request`, "get", data => {
+  let info = JSON.parse(data.body);
+  let code;
+  if (info)
+    return {
+      code_state: true
+    };
+});
 
-const Random = Mock.Random
-
-Mock.mock('http://localhost:8080/login/', 'post', (data) => {
-  // 请求传过来的参数在body中,传回的是json字符串,需要转义一下
-  const mobile= JSON.parse(data.body)
-  return {
-
-    code:d{6}
+//验证码检验
+Mock.mock(`${baseUrl}/login/code_check`, "get", data => {
+  let info = JSON.parse(data.body);
+  console.log(info);
+  let code;
+  const access_token =
+    "35_L6brmEv-xn5QEicDd5NnfJ50fgVRBO4EAwFi2JzgzlQUgIlgcpS88cuVDlNT6vSlyWwSei-XXH2XDnMwYBrHJ651eBCFf2Yv75ANRNjcB1ZPDCc88mvL-8j_KGSd1JuKJwBnqbrfsxfw9YZXYHPdAJACLT";
+  if (info.loginForm.mobile == "123456" && info.loginForm.code == "123456") {
+    return access_token;
+  } else {
+    return (code = 404);
   }
-})
+});
+
+//git登陆请求
+Mock.mock(`${baseUrl}/login/git_request`, "get", data => {
+  let  info = JSON.parse(data.body);
+  console.log(info);
+  const redirect_uri = info.redirect_uri 
+  const client_id = "c27b8b3952f2204fc51d";
+  const authorize_uri = "https://github.com/login/oauth/authorize";
+  const href = `${authorize_uri}?client_id=${client_id}&redirect_uri=${redirect_uri}`;
+  console.log(href);
+  return {
+    //href
+  };
+});
+//git 重定向
+Mock.mock(`${baseUrl}/oauth/redirect`, "get", oauth=> {
+  console.log(oauth);
+});
 
 
+//git请求授权
+Mock.mock(`${baseUrl}/login/git_oauth`, "get", data => {
 
-// mock需要给三个参数,url(与axios请求是传的url一致,我这个是本地启动的项目就直接用本地域名了)
-// 请求类型: get post...其他看文档
-// 数据处理函数,函数需要return数据
-// Mock.mock('http://localhost:8080/login/', 'get', () => {
-//   let citys = []
-//   for (let i = 0; i < 10; i++) {
-//     let obj = {
-//       id: i+1,
-//       city: Random.city(),
-//       color: Random.color()
-//     }
-//     citys.push(obj)
-//   }
-//   return {cityList: citys}
-// })
-// // post请求,带参数,参数会在data中返回,会返回url,type,body三个参数,可以把data打印出来看看
-// Mock.mock('http://localhost:8080/', 'post', (data) => {
-//   // 请求传过来的参数在body中,传回的是json字符串,需要转义一下
-//   const info= JSON.parse(data.body)
-//   return {
-//     img: Random.image('200x100', '#4A7BF7', info.name)
-//   }
-// })
-
+});
