@@ -1,39 +1,50 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import Login from '@/components/Login.vue'
-import Welcome from '@/components/Welcome.vue'
+import Vue from "vue";
+import Router from "vue-router";
+import Login from "@/components/Login.vue";
+import Welcome from "@/components/Welcome.vue";
+import Git from "@/components/Git.vue";
 
-Vue.use(Router)
+Vue.use(Router);
 
 const router = new Router({
+  mode: 'history',
   routes: [
     {
-      path: '/',
-      name: 'login',
+      path: "/",
       component: Login
     },
     {
-      path: '/login',
-      name: 'Login',
+      path: "/login",
       component: Login
     },
     {
-      path: '/welcome',
-      name: 'Welcome',
+      path: "/welcome",
       component: Welcome
+    },
+    {
+      path: "/oauth/redirect",
+      name: Git,
+      component: Git
     }
-  ]
-})
+  ],
+ 
+});
+
+export default router;
+
+
+
+
+
+
+
 
 
 // 挂载路由导航守卫
-router.beforeEach((to, from, next) => {
-
-  if (to.path === '/login') return next()
-// 获取token
-  const tokenStr = window.sessionStorage.getItem('token')
-  if (!tokenStr) return next('/login')
-  next()
-})
-
-export default router
+// router.beforeEach((to, from, next) => {
+//   if (to.path === "/login") return next();
+//   // 获取token
+//   const tokenStr = window.sessionStorage.getItem("token");
+//   if (!tokenStr) return next("/login");
+//   next();
+// });

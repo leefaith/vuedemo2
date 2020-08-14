@@ -123,11 +123,8 @@ export default {
       })
         .then(res => {
           console.log(res.data.href);
-        //  window.location.href = res.data.href
+          window.location.href = res.data.href
         })
-        .catch(error => {
-          console.log(error);
-        });
     }
   }
 };
