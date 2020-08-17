@@ -1,10 +1,10 @@
 import Mock from "mockjs";
 import axios from "axios";
 
-const baseUrl = "0171f09d7192f2b44bf0";
-const clientId = "0171f09d7192f2b44bf0";
+const baseUrl = "http://localhost:8080";
+const clientID = "2562e9b67566a65610f2";
 const authorize_uri = "https://github.com/login/oauth/authorize";
-const clientSecret = "443e278cf9c35894a8072a681d8f41b998c64fc8";
+const clientSecret = "a9893be29383d198eeff22bf20c68fd1e64c4b78";
 //获取验证码
 Mock.mock(`${baseUrl}/login/code_request`, "get", data => {
   let info = JSON.parse(data.body);
@@ -33,7 +33,7 @@ Mock.mock(`${baseUrl}/login/git_request`, "get", data => {
   let info = JSON.parse(data.body);
   console.log(info);
   const redirect_uri = info.redirect_uri;
-  const href = `${authorize_uri}?client_id=${clientId}&redirect_uri=${redirect_uri}`;
+  const href = `${authorize_uri}?client_id=${clientID}&redirect_uri=${redirect_uri}`;
   console.log(href);
   return {
     href
@@ -44,30 +44,26 @@ Mock.mock(`${baseUrl}/login/git_request`, "get", data => {
 Mock.mock(`${baseUrl}/login/git_oauth`, "get", data => {
   let info = JSON.parse(data.body);
   const requestToken = info.code;
-  console.log(requestToken );
-  //获取token
-  // const get_token = async ctx => {
+  console.log(requestToken);
 
-  
-  //   //const url = `https://github.com/login/oauth/access_token?client_id=${clientId}&client_secret=${clientSecret}&code=${requestCode}`;
+  //拼接URL
+  const URL = `https://github.com/login/oauth/access_token?client_id=${clientID}&client_secret=${clientSecret}&code=${requestToken}`;
 
-  //   const tokenResponse = await axios({
-  //     method: "POST",
-  //     url: 'https://github.com/login/oauth/access_token?' +
-  //     `client_id=${clientID}&` +
-  //     `client_secret=${clientSecret}&` +
-  //     `code=${requestToken}`,
+  //第一种方法可以得到token  但是是下载文件模式。没法传给前端
+  // window.location.href = URL
+
+  //第二种获取token  ，  这种方式总是出现跨域问题
+  // const tokenResponse = axios({
+  //   method: "POST",
+  //   url: `https://github.com/login/oauth/access_token?client_id=${clientID}&client_secret=${clientSecret}&code=${requestToken}`,
+  //   headers: {
   //     headers: {
-  //       headers: {
-  //         accept: "application/json"
-  //       }
+  //       accept: "application/json"
   //     }
-  //   });
+  //   }
+  // });
+  //  console.log(tokenResponse);
 
-  //   console.log(tokenResponse);
-  // };
 
-  // window.location.href = url
-  // const accessToken = tokenResponse.data.access_token;
-  // console.log(`access token: ${accessToken}`);
+  return {};
 });
