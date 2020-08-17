@@ -25,7 +25,7 @@ export default {
         }
       }).then(res => {
         console.log(res);
-        //保存从后台获取的token，跳转到欢迎页面
+        //保存从后台获取的token，跳转到欢迎页面 
         //  window.sessionStorage.setItem('token',res.data.token)
          this.$router.push("/welcome")
       });

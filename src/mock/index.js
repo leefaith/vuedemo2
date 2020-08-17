@@ -50,7 +50,8 @@ Mock.mock(`${baseUrl}/login/git_oauth`, "get", data => {
   const URL = `https://github.com/login/oauth/access_token?client_id=${clientID}&client_secret=${clientSecret}&code=${requestToken}`;
 
   //第一种方法可以得到token  但是是下载文件模式。没法传给前端
-  // window.location.href = URL
+  //得到 如access_token=e7dce17146e898d13de9de3dfce0acdcbfd6cffc&scope=&token_type=bearer下载文件
+   window.location.href = URL
 
   //第二种获取token  ，  这种方式总是出现跨域问题
   // const tokenResponse = axios({
